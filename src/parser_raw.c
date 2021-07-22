@@ -63,8 +63,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-//Note that the version of math.h used depends on compiler
-//You need to append -lm to your compile command
+// Note that the version of math.h used depends on compiler
+// You need to append -lm to your compile command
 #include <math.h>
 
 #define MAXLEN 1000
@@ -74,25 +74,25 @@
 FILE* input;
 FILE* output;
 
-//This defines cell attributes and sets 'board' as a pointer to 'cell'
-//For example, calling board[i].mine calls the value of mine at that cell location
+// This defines cell attributes and sets 'board' as a pointer to 'cell'
+// For example, calling board[i].mine calls the value of mine at that cell location
 struct cell
 {
-	int mine;					//Value 1 if cell is a mine
-	int opening; 				//Value 1 if cell belongs to an opening
-	int opening2;				//Value 1 if cell belongs to a second opening
-	int island;					//Value 1 if cell belongs to an island of numbers
-	int number;					//Value 1 if cell is a number
-	int rb,re,cb,ce; 			//See init_board() function these are used to identify cell neighbours
-	int opened;					//Value 1 if cell has been opened
-	int flagged,wasted_flag;	//Value 1 for both when flagged but do_chord() function returns wasted_flag to 0
-	int questioned;				//Value 1 if cell has a Questionmark
-	int premium;				//Variable used in ZiNi calculations to assess optimal flagging style strategy
+	int mine;					// Value 1 if cell is a mine
+	int opening; 				// Value 1 if cell belongs to an opening
+	int opening2;				// Value 1 if cell belongs to a second opening
+	int island;					// Value 1 if cell belongs to an island of numbers
+	int number;					// Value 1 if cell is a number
+	int rb,re,cb,ce; 			// See init_board() function these are used to identify cell neighbours
+	int opened;					// Value 1 if cell has been opened
+	int flagged,wasted_flag;	// Value 1 for both when flagged but do_chord() function returns wasted_flag to 0
+	int questioned;				// Value 1 if cell has a Questionmark
+	int premium;				// Variable used in ZiNi calculations to assess optimal flagging style strategy
 };
 typedef struct cell cell;
 cell* board;
 
-//Initiate global variables
+// Initiate global variables
 int w,h,m,size;
 int won=0;
 int no_board_events=0,no_zini=0,no_rilian_clicks=1,no_check_info=0;
@@ -117,19 +117,19 @@ int elmar,nono,superclick,superflag;
 
 
 
-//==============================================================================================
-//Function asks user to exit after program has run successfully
-//==============================================================================================
+// ==============================================================================================
+// Function asks user to exit after program has run successfully
+// ==============================================================================================
 void pause()
 {
-	//fprintf(stderr,"Press enter to exit\n");
-	//while(getchar()!='\n');
+	// fprintf(stderr,"Press enter to exit\n");
+	// while(getchar()!='\n');
 }
 
 
-//==============================================================================================
-//Function to print error messages
-//==============================================================================================
+// ==============================================================================================
+// Function to print error messages
+// ==============================================================================================
 void error(const char* msg)
 {
 	fprintf(stderr,"%s\n",msg);
@@ -138,11 +138,11 @@ void error(const char* msg)
 }
 
 
-//==============================================================================================
-//Functions to read key:value pairs from the input file header
-//==============================================================================================
+// ==============================================================================================
+// Functions to read key:value pairs from the input file header
+// ==============================================================================================
 
-//Read key (ie, 'Level')
+// Read key (ie, 'Level')
 int opteq(const char* opt,const char* str)
 {
 	int i=0;
@@ -150,7 +150,7 @@ int opteq(const char* opt,const char* str)
 	return opt[i]==':' && str[i]==0;
 }
 
-//Read value (ie, 'Intermediate)
+// Read value (ie, 'Intermediate)
 int valeq(const char *val, const char* str)
 {
 	int i=0, j=0;
@@ -160,11 +160,11 @@ int valeq(const char *val, const char* str)
 }
 
 
-//==============================================================================================
-//Functions to erase board information
-//==============================================================================================
+// ==============================================================================================
+// Functions to erase board information
+// ==============================================================================================
 
-//Erase all information about cells
+// Erase all information about cells
 void clearboard()
 {
 	int i;
@@ -174,7 +174,7 @@ void clearboard()
 		board[i].opening=board[i].opening2=board[i].island=0;
 }
 
-//Erase all information about cell states
+// Erase all information about cell states
 void restartboard()
 {
 	int i;
@@ -184,27 +184,27 @@ void restartboard()
 }
 
 
-//==============================================================================================
-//Function to count mines touching a cell
-//==============================================================================================
+// ==============================================================================================
+// Function to count mines touching a cell
+// ==============================================================================================
 int getnumber(int index)
 {
 	int rr,cc;
 	int res=0;
-	//Check neighbourhood
+	// Check neighbourhood
 	for(rr=board[index].rb;rr<=board[index].re;++rr)
 		for(cc=board[index].cb;cc<=board[index].ce;++cc)
-			//Increase count if cell is a mine
+			// Increase count if cell is a mine
 			res+=board[cc*h+rr].mine;
 	return res;
 }
 
 
-//==============================================================================================
-//Functions used by init_board() to determine size of Openings and Islands
-//==============================================================================================
+// ==============================================================================================
+// Functions used by init_board() to determine size of Openings and Islands
+// ==============================================================================================
 
-//Determine if cell belongs to 1 or 2 Openings and assign it to an Opening ID
+// Determine if cell belongs to 1 or 2 Openings and assign it to an Opening ID
 void set_opening_border(int op_id,int index)
 {
 	if(!board[index].opening)
@@ -213,13 +213,13 @@ void set_opening_border(int op_id,int index)
 		board[index].opening2=op_id;
 }
 
-//Determine the size (number of cells) in the Opening
+// Determine the size (number of cells) in the Opening
 void process_opening(int op_id,int index)
 {
 	int rr,cc;
 	++size_ops[op_id];
 	board[index].opening=op_id;
-	//Check neighbourhood
+	// Check neighbourhood
 	for(rr=board[index].rb;rr<=board[index].re;++rr)
 		for(cc=board[index].cb;cc<=board[index].ce;++cc)
 		{
@@ -234,13 +234,13 @@ void process_opening(int op_id,int index)
 		}		
 }
 
-//Determine the size (number of cells) in the Island
+// Determine the size (number of cells) in the Island
 void process_island(int is_id,int index)
 {
 	int rr,cc;
 	board[index].island=is_id;
 	++size_isls[is_id];
-	//Check neighbourhood
+	// Check neighbourhood
 	for(rr=board[index].rb;rr<=board[index].re;++rr)
 		for(cc=board[index].cb;cc<=board[index].ce;++cc)
 		{
@@ -251,16 +251,16 @@ void process_island(int is_id,int index)
 }
 
 
-//==============================================================================================
-//Function to read board layout and count number of Openings and Islands
-//==============================================================================================
+// ==============================================================================================
+// Function to read board layout and count number of Openings and Islands
+// ==============================================================================================
 void init_board()
 {
 	int i;
 	int r,c;
 	openings=0;
 	
-	//Determine the neighbourhood for each cell
+	// Determine the neighbourhood for each cell
 	for(r=0;r<h;++r)
 	{
 		for(c=0;c<w;++c)
@@ -273,17 +273,17 @@ void init_board()
 		}
 	}
 	
-	//Set initial premium for each cell (for ZiNi calculations)
+	// Set initial premium for each cell (for ZiNi calculations)
 	for(i=0;i<size;++i)
 	{
-		//Premium is used in ZiNi calculations
-		//ZiNi attempts to determine the optimal flagging strategy
-		//Premium tries to determine potential contribution of cell to optimal solve of game
-		//The fewer clicks needed to perform a useful action (like a chord) the higher the premium
-		//Mines have no premium
-		//An opened cell is more useful than a closed cell
-		//Each correct flag makes a number more useful		
-		//A higher number is less useful because more flags are required		
+		// Premium is used in ZiNi calculations
+		// ZiNi attempts to determine the optimal flagging strategy
+		// Premium tries to determine potential contribution of cell to optimal solve of game
+		// The fewer clicks needed to perform a useful action (like a chord) the higher the premium
+		// Mines have no premium
+		// An opened cell is more useful than a closed cell
+		// Each correct flag makes a number more useful		
+		// A higher number is less useful because more flags are required		
 		board[i].premium= -(board[i].number=getnumber(i))-2;
 	}
 	
@@ -292,7 +292,7 @@ void init_board()
 		{
 			if(++openings>MAXOPS) error("Too many openings");
 			size_ops[openings]=0;
-			//Send to function to determine size of Opening			
+			// Send to function to determine size of Opening			
 			process_opening(openings,i);
 		}
 		
@@ -301,84 +301,84 @@ void init_board()
 		{
 			if(++islands>MAXISLS) error("Too many islands");
 			size_isls[islands]=0;
-			//Send to function to determine size of Island
+			// Send to function to determine size of Island
 			process_island(islands,i);
 		}
 }
 
 
-//==============================================================================================
-//Function used by both the calc_bbbv() and calc_zini() functions
-//==============================================================================================
+// ==============================================================================================
+// Function used by both the calc_bbbv() and calc_zini() functions
+// ==============================================================================================
 int getadj3bv(int index)
 {
 	int res=0;
 	int rr,cc;
 	if(!board[index].number) return 1;
-	//Check neighbourhood
+	// Check neighbourhood
 	for(rr=board[index].rb;rr<=board[index].re;++rr)
 		for(cc=board[index].cb;cc<=board[index].ce;++cc)
 		{
 			int i=cc*h+rr;
 			res+=(!board[i].mine && !board[i].opening); 
 		}
-	//Number belongs to the edge of an opening	
+	// Number belongs to the edge of an opening	
 	if(board[index].opening) ++res;
-	//Number belongs to the edge of a second opening
+	// Number belongs to the edge of a second opening
 	if(board[index].opening2) ++res;
-	//Return number (0-9)
+	// Return number (0-9)
 	return res;
 }
 
 
-//==============================================================================================
-//Function to calculate 3bv
-//==============================================================================================
+// ==============================================================================================
+// Function to calculate 3bv
+// ==============================================================================================
 void calc_bbbv()
 {
 	int i;
-	//Start by setting 3bv equal to the number of openings
+	// Start by setting 3bv equal to the number of openings
 	bbbv=openings;
 	for(i=0;i<size;++i)
 	{
-		//Increase 3bv count if it is a non-edge number
+		// Increase 3bv count if it is a non-edge number
 		if(!board[i].opening && !board[i].mine)	++bbbv;
 		board[i].premium+=getadj3bv(i);
 	}
 }
 
 
-//==============================================================================================
-//Functions used only by the calc_zini() function
-//==============================================================================================
+// ==============================================================================================
+// Functions used only by the calc_zini() function
+// ==============================================================================================
 
-//Open cell
+// Open cell
 void open(int index)
 {
 	int rr,cc;
 	board[index].opened=1;
 	++board[index].premium;
 	
-	//Check cell is a number and not on the edge of an opening
+	// Check cell is a number and not on the edge of an opening
 	if(!board[index].opening)
 		for(rr=board[index].rb;rr<=board[index].re;++rr)
 			for(cc=board[index].cb;cc<=board[index].ce;++cc)
 				--board[cc*h+rr].premium;
-	//Decrease count of unopened cells		
+	// Decrease count of unopened cells		
 	--closed_cells;
 }
 
-//Perform checks before opening cells
+// Perform checks before opening cells
 void reveal(int index)
 {
-	//Do not open flagged or already open cells
+	// Do not open flagged or already open cells
 	if(board[index].opened) return;
 	if(board[index].flagged) return;
 
-	//Open if cell is a non-zero number
+	// Open if cell is a non-zero number
 	if(board[index].number) 
 		open(index);
-	//Cell is inside an opening (not a number on the edge)
+	// Cell is inside an opening (not a number on the edge)
 	else
 	{
 		int op=board[index].opening;
@@ -388,32 +388,32 @@ void reveal(int index)
 			if(board[i].opening2==op ||
 				board[i].opening==op)
 			{
-				//Open all numbers on the edge of the opening
+				// Open all numbers on the edge of the opening
 				if(!board[i].opened) open(i);
-				//Reduce premium of neighbouring cells
-				//Chording on neighbouring cells will no longer open this opening
+				// Reduce premium of neighbouring cells
+				// Chording on neighbouring cells will no longer open this opening
 				--board[i].premium;
 			}
 		}
 	}
 }
 
-//Flag
+// Flag
 void flag(int index)
 {
 	int rr,cc;
 	if(board[index].flagged) return;
 	++zini;
 	board[index].flagged=1;
-	//Check neighbourhood
+	// Check neighbourhood
 	for(rr=board[index].rb;rr<=board[index].re;++rr)
 		for(cc=board[index].cb;cc<=board[index].ce;++cc)
-			//Increase premium of neighbouring cells
-			//Placing a flag makes it 1 click more likely a chord can occur
+			// Increase premium of neighbouring cells
+			// Placing a flag makes it 1 click more likely a chord can occur
 			++board[cc*h+rr].premium;
 }
 
-//Chord
+// Chord
 void chord(int index)
 {
 	int rr,cc;
@@ -423,14 +423,14 @@ void chord(int index)
 			reveal(cc*h+rr);
 }
 
-//Click
+// Click
 void click(int index)
 {
 	reveal(index);
 	++zini;
 }
 
-//Click inside an opening (not on the edge)
+// Click inside an opening (not on the edge)
 void hit_openings()
 {
 	int j;
@@ -441,11 +441,11 @@ void hit_openings()
 		}
 }
 
-//Flags neighbouring mines
+// Flags neighbouring mines
 void flagaround(int index)
 {
 	int rr,cc;
-	//Check neighbourhood
+	// Check neighbourhood
 	for(rr=board[index].rb;rr<=board[index].re;++rr)
 		for(cc=board[index].cb;cc<=board[index].ce;++cc)
 		{
@@ -456,16 +456,16 @@ void flagaround(int index)
 
 
 
-//==============================================================================================
-//Function to calculate ZiNi and HZiNi
-//==============================================================================================
+// ==============================================================================================
+// Function to calculate ZiNi and HZiNi
+// ==============================================================================================
 void calc_zini()
 {
 	int i;
 	zini=0;
 	restartboard();
 	
-	//While non-mine cells remain unopened
+	// While non-mine cells remain unopened
 	while(closed_cells>m)
 	{
 		int maxp=-1;
@@ -479,7 +479,7 @@ void calc_zini()
 			}
 		}
 		
-		//Premium has climbed into positive territory
+		// Premium has climbed into positive territory
 		if(curi!=-1)
 		{	
 			if(!board[curi].opened) click(curi);
@@ -501,7 +501,7 @@ void calc_zini()
 	
 	gzini=zini;
 	
-	//Start calculating HZiNi
+	// Start calculating HZiNi
 	for(i=0;i<size;++i)
 	{
 		board[i].premium=-(board[i].number)-2+getadj3bv(i);;
@@ -510,7 +510,7 @@ void calc_zini()
 	restartboard();
 	hit_openings();
 	
-	//While non-mine cells remain unopened
+	// While non-mine cells remain unopened
 	while(closed_cells>m)
 	{
 		int maxp=-1;
@@ -524,7 +524,7 @@ void calc_zini()
 			}
 		}
 		
-		//Premium has climbed into positive territory		
+		// Premium has climbed into positive territory		
 		if(curi!=-1)
 		{	
 			if(!board[curi].opened) click(curi);
@@ -548,20 +548,20 @@ void calc_zini()
 }
 
 
-//==============================================================================================
-//Function to check if mouse location is over the board
-//==============================================================================================
+// ==============================================================================================
+// Function to check if mouse location is over the board
+// ==============================================================================================
 int is_inside_board(int x,int y)
 {
 	return x>=0 && x<w && y>=0 && y<h;
 }
 
 
-//==============================================================================================
-//Functions to press cells
-//==============================================================================================
+// ==============================================================================================
+// Functions to press cells
+// ==============================================================================================
 
-//Press cell
+// Press cell
 void push(int x,int y)
 {
 	if(no_board_events) return;
@@ -574,7 +574,7 @@ void push(int x,int y)
 	}
 }
 
-//Check which cells to press
+// Check which cells to press
 void push_around(int x,int y)
 {
 	int i,j;
@@ -584,11 +584,11 @@ void push_around(int x,int y)
 }
 
 
-//==============================================================================================
-//Functions to unpress cells (this does not open them)
-//==============================================================================================
+// ==============================================================================================
+// Functions to unpress cells (this does not open them)
+// ==============================================================================================
 
-//Unpress cell
+// Unpress cell
 void pop(int x,int y)
 {
 	if(!board[x*h+y].opened && !board[x*h+y].flagged)
@@ -600,7 +600,7 @@ void pop(int x,int y)
 	}
 }
 
-//Check which cells to unpress
+// Check which cells to unpress
 void pop_around(int x,int y)
 {
 	int i,j;
@@ -610,21 +610,21 @@ void pop_around(int x,int y)
 }
 
 
-//==============================================================================================
-//Functions to check Win or Lose status
-//==============================================================================================
+// ==============================================================================================
+// Functions to check Win or Lose status
+// ==============================================================================================
 void win()
 {
 	end_time=cur_time;
 	won=1;
 }
 
-//Print Solved 3bv
+// Print Solved 3bv
 void check_win()
 {
-	//This fixes a rounding error. The 3f rounds to 3 decimal places.
-	//Using 10,000 rounds the 4th decimal place first before 3f is calculated.
-	//This has the desired effect of truncating to 3 decimals instead of rounding.
+	// This fixes a rounding error. The 3f rounds to 3 decimal places.
+	// Using 10,000 rounds the 4th decimal place first before 3f is calculated.
+	// This has the desired effect of truncating to 3 decimals instead of rounding.
 	int fix;
 	float fixfloated;
 	fix=(int)(cur_time)*10;
@@ -640,23 +640,23 @@ void fail()
 }
 
 
-//==============================================================================================
-//Functions for opening cells
-//==============================================================================================
+// ==============================================================================================
+// Functions for opening cells
+// ==============================================================================================
 
-//Change cell status to open
+// Change cell status to open
 void show(int x,int y)
 {
 	int index=x*h+y;
 	fprintf(output,"Cell opened (Number %d) %d %d\n",board[index].number,x+1,y+1);
 	board[index].opened=1;
-	//Increment counters if cell belongs to an opening and if this iteration opens the last cell in that opening
+	// Increment counters if cell belongs to an opening and if this iteration opens the last cell in that opening
 	if(board[index].opening) if(!(--size_ops[board[index].opening])) {++solved_ops;++solved_bbbv;}
-	//Increment counters if cell belongs to another opening and this iteration opens last cell in that opening	
+	// Increment counters if cell belongs to another opening and this iteration opens last cell in that opening	
 	if(board[index].opening2) if(!(--size_ops[board[index].opening2])) {++solved_ops;++solved_bbbv;}
 }
 
-//Check how many cells to change
+// Check how many cells to change
 void show_opening(int op)
 {
 	int i,j,k=0;
@@ -666,10 +666,10 @@ void show_opening(int op)
 				show(i,j);
 }
 
-//Perform checks before changing cell status
+// Perform checks before changing cell status
 void do_open(int x,int y)
 {
-	//Lose if cell is a mine
+	// Lose if cell is a mine
 	if(board[x*h+y].mine)
 	{
 		board[x*h+y].opened=1;
@@ -678,21 +678,21 @@ void do_open(int x,int y)
 	}
 	else
 	{
-		//Check cell is inside an opening (number zero)
+		// Check cell is inside an opening (number zero)
 		if(!board[x*h+y].number) 
 		{
-			//Open correct number of cells			
+			// Open correct number of cells			
 			show_opening(board[x*h+y].opening);	
 			check_win();	
 		}			
 		else 
 		{
-			//Open single cell because it is a non-zero number
+			// Open single cell because it is a non-zero number
 			show(x,y);
 			if(!board[x*h+y].opening) 
 			{
 				++solved_bbbv;
-				//Increment count of solved islands if this is last cell of the island to be opened
+				// Increment count of solved islands if this is last cell of the island to be opened
 				if(!(--size_isls[board[x*h+y].island])) ++solved_isls;
 				check_win();
 			}
@@ -701,11 +701,11 @@ void do_open(int x,int y)
 }
 
 
-//==============================================================================================
-//Functions to Flag, Mark and Chord
-//==============================================================================================
+// ==============================================================================================
+// Functions to Flag, Mark and Chord
+// ==============================================================================================
 
-//Count number of adjacent flags
+// Count number of adjacent flags
 int flags_around(int x,int y)
 {
 	int i,j,res=0;
@@ -715,35 +715,35 @@ int flags_around(int x,int y)
 	return res;
 }
 
-//Chord
+// Chord
 void do_chord(int x,int y,int onedotfive)
 {
 	int wasted=1,i,j;
-	//Check cell is already open and number equals count of surrounding flags
+	// Check cell is already open and number equals count of surrounding flags
 	if(board[x*h+y].number==flags_around(x,y) && board[x*h+y].opened)
 	{
-		//Check neighbourhood
+		// Check neighbourhood
 		for(i=board[x*h+y].rb;i<=board[x*h+y].re;++i)
 			for(j=board[x*h+y].cb;j<=board[x*h+y].ce;++j)
-				//Lose game if cell is not flagged and is a mine
+				// Lose game if cell is not flagged and is a mine
 				if(board[j*h+i].mine && !board[j*h+i].flagged)
 					fail();
-		//Check neighbourhood		
+		// Check neighbourhood		
 		for(i=board[x*h+y].rb;i<=board[x*h+y].re;++i)
 			for(j=board[x*h+y].cb;j<=board[x*h+y].ce;++j)
-				//Open cell if not flagged and not already open
+				// Open cell if not flagged and not already open
 				if(!board[j*h+i].opened && !board[j*h+i].flagged)
 				{
 					do_open(j,i);
 					wasted=0;
 				}
-				//Chord was successful so flag was not wasted
+				// Chord was successful so flag was not wasted
 				else if(board[j*h+i].flagged && board[j*h+i].wasted_flag)
 				{
 					board[j*h+i].wasted_flag=0;
 					--wasted_flags;
 				}
-		//Chord has been wasted		
+		// Chord has been wasted		
 		if(wasted)
 		{
 			++wasted_d_clicks;
@@ -752,59 +752,59 @@ void do_chord(int x,int y,int onedotfive)
 	}
 	else
 	{
-		//Unpress chorded cells without opening them
+		// Unpress chorded cells without opening them
 		pop_around(x,y);
 		++wasted_d_clicks; 
 		if(onedotfive) ++wasted_clicks_15;
 	}
 }
 
-//Flag
+// Flag
 void do_set_flag(int x,int y)
 {
-	//Note that the wasted_flag value becomes 0 after successful chord() function
+	// Note that the wasted_flag value becomes 0 after successful chord() function
 	board[x*h+y].flagged=board[x*h+y].wasted_flag=1;
 	fprintf(output,"Flag %d %d\n",x+1,y+1);
 	++flags;++wasted_flags;
-	//Increase misflag count because cell is not a mine
+	// Increase misflag count because cell is not a mine
 	if(!board[x*h+y].mine) ++misflags;
 }
 
-//Questionmark
+// Questionmark
 void do_question(int x,int y)
 {
 	board[x*h+y].questioned=1;
 	fprintf(output,"Questionmark %d %d\n",x+1,y+1);
 }
 
-//Remove Flag or Questionmark
+// Remove Flag or Questionmark
 void do_unset_flag(int x,int y)
 {
 	board[x*h+y].flagged=board[x*h+y].questioned=0;
 	fprintf(output,"Flag removed %d %d\n",x+1,y+1);
-	//Decrease flag count, increase unflag count
+	// Decrease flag count, increase unflag count
 	--flags;++unflags;
-	//Increase misunflag count because cell is not a mine
+	// Increase misunflag count because cell is not a mine
 	if(!board[x*h+y].mine) ++misunflags;
 }
 
 
-//Part of 'superflag' cheat function (flags neighbouring mines)
+// Part of 'superflag' cheat function (flags neighbouring mines)
 void do_flag_around(int x,int y)
 {
 	int i,j;
-	//Check neighbourhood
+	// Check neighbourhood
 	for(i=board[x*h+y].rb;i<=board[x*h+y].re;++i)
 		for(j=board[x*h+y].cb;j<=board[x*h+y].ce;++j)
 			if(!board[j*h+i].flagged && !board[j*h+i].opened)
 				do_set_flag(j,i);
 }
 
-//Part of 'superflag' cheat function (counts unopened neighbours)
+// Part of 'superflag' cheat function (counts unopened neighbours)
 int closed_sq_around(int x,int y)
 {
 	int i,j,res=0;
-	//Check neighbourhood	
+	// Check neighbourhood	
 	for(i=board[x*h+y].rb;i<=board[x*h+y].re;++i)
 		for(j=board[x*h+y].cb;j<=board[x*h+y].ce;++j)
 			if(!board[j*h+i].opened) ++res;
@@ -812,14 +812,14 @@ int closed_sq_around(int x,int y)
 }
 
 
-//==============================================================================================
-//Functions for clicking and moving the mouse
-//==============================================================================================
+// ==============================================================================================
+// Functions for clicking and moving the mouse
+// ==============================================================================================
 
-//Function definition needed here because mouse_move() and left_click() reference each other
+// Function definition needed here because mouse_move() and left_click() reference each other
 void mouse_move(int x,int y,int prec_x,int prec_y);
 
-//Left click
+// Left click
 void left_click(int x,int y,int prec_x,int prec_y)
 {
 	if(!left) return;
@@ -830,7 +830,7 @@ void left_click(int x,int y,int prec_x,int prec_y)
 		chorded=0;
 		return;
 	}
-	//Chord
+	// Chord
 	if(right || shift_left || (superclick && board[x*h+y].opened))
 	{
 		++d_clicks;
@@ -839,10 +839,10 @@ void left_click(int x,int y,int prec_x,int prec_y)
 		chorded=right;
 		shift_left=0;
 	}
-	//Left click
+	// Left click
 	else	
 	{
-		//Rilian click
+		// Rilian click
 		if(chorded)	
 		{
 			chorded=0;
@@ -856,7 +856,7 @@ void left_click(int x,int y,int prec_x,int prec_y)
 	cur_x=x;cur_y=y;
 }
 
-//Mouse movement
+// Mouse movement
 void mouse_move(int x,int y,int prec_x,int prec_y)
 {
 	if(is_inside_board(x,y))
@@ -893,8 +893,8 @@ void mouse_move(int x,int y,int prec_x,int prec_y)
 			}
 		}
 	}
-	//Distance is measured using Manhattan metric instead of Euclidean
-	//Rationale is that pixels form a grid thus are not points
+	// Distance is measured using Manhattan metric instead of Euclidean
+	// Rationale is that pixels form a grid thus are not points
 	distance+=abs(cur_prec_x-prec_x)+abs(cur_prec_y-prec_y);
 	cur_prec_x=prec_x;cur_prec_y=prec_y;
 	
@@ -904,7 +904,7 @@ void mouse_move(int x,int y,int prec_x,int prec_y)
 	}
 }
 
-//Left button down
+// Left button down
 void left_press(int x,int y,int prec_x,int prec_y)
 {
 	if(middle) return;
@@ -922,7 +922,7 @@ void left_press(int x,int y,int prec_x,int prec_y)
 	cur_x=x;cur_y=y;
 }
 
-//Chord using Shift during LC-LR
+// Chord using Shift during LC-LR
 void left_press_with_shift(int x,int y,int prec_x,int prec_y)
 {
 	if(middle) return;
@@ -937,13 +937,13 @@ void left_press_with_shift(int x,int y,int prec_x,int prec_y)
 	cur_x=x;cur_y=y;
 }
 
-//Toggle question mark setting
+// Toggle question mark setting
 void toggle_question_mark_setting(int x,int y,int prec_x,int prec_y)
 {
 	qm=!qm;
 }
 
-//Right button down
+// Right button down
 void right_press(int x,int y,int prec_x,int prec_y)
 {
 	if(middle) return;
@@ -982,7 +982,7 @@ void right_press(int x,int y,int prec_x,int prec_y)
 	cur_x=x;cur_y=y;
 }
 
-//Right button up
+// Right button up
 void right_click(int x,int y,int prec_x,int prec_y)
 {
 	if(!right) return;
@@ -993,7 +993,7 @@ void right_click(int x,int y,int prec_x,int prec_y)
 		onedotfive=0;
 		return;
 	}
-	//Chord
+	// Chord
 	if(left)
 	{
 		pop_around(cur_x,cur_y);
@@ -1001,10 +1001,10 @@ void right_click(int x,int y,int prec_x,int prec_y)
 		++d_clicks;
 		chorded=1;
 	}
-	//Click did not produce a Flag or Chord	
+	// Click did not produce a Flag or Chord	
 	else
 	{
-		//It was a RC not the beginning of a Chord
+		// It was a RC not the beginning of a Chord
 		if(!onedotfive && !chorded)
 		{
 			++r_clicks;
@@ -1016,17 +1016,17 @@ void right_click(int x,int y,int prec_x,int prec_y)
 	cur_x=x;cur_y=y;
 }
 
-//Middle button down
+// Middle button down
 void middle_press(int x,int y,int prec_x,int prec_y)
 {
-	//Middle button resets these boolean values
+	// Middle button resets these boolean values
 	shift_left=left=right=onedotfive=chorded=0;
 	middle=1;
 	if(!is_inside_board(x,y)) return;
 	push_around(x,y);
 }
 
-//Middle button up
+// Middle button up
 void middle_click(int x,int y,int prec_x,int prec_y)
 {
 	if(!middle) return;
@@ -1038,11 +1038,11 @@ void middle_click(int x,int y,int prec_x,int prec_y)
 
 
 
-//==============================================================================================
-//Function to convert string to double (decimal number with high precision)
-//==============================================================================================
+// ==============================================================================================
+// Function to convert string to double (decimal number with high precision)
+// ==============================================================================================
 
-//This is a custom function to mimic atoi but for decimals
+// This is a custom function to mimic atoi but for decimals
 double strtodouble(const char* str)
 {
 	double res=0.0;
@@ -1067,16 +1067,16 @@ double strtodouble(const char* str)
 
 
 
-//==============================================================================================
-//Run program
-//==============================================================================================
+// ==============================================================================================
+// Run program
+// ==============================================================================================
 int main(int argc,char** argv)
 {
-	//Initialise local variables
+	// Initialise local variables
 	int i,r,c,opts,std=0;
 
-	//Program can be run in command line as "program input.txt>output.txt"
-	//The output file is optional if you prefer printing to screen		
+	// Program can be run in command line as "program input.txt>output.txt"
+	// The output file is optional if you prefer printing to screen		
 	if(argc<2)
 	{
 		printf("Usage: rawvf2rawvf [-eirsz] [input] [output]\n");
@@ -1089,11 +1089,11 @@ int main(int argc,char** argv)
 		return 2;
 	}
 	
-	//Set some global variables to their default value
+	// Set some global variables to their default value
 	no_board_events=0;
 	no_zini=0;
 	
-	//If parameter 1 has been entered apply selection when running the program
+	// If parameter 1 has been entered apply selection when running the program
 	if((opts=(argv[1][0]=='-')))
 	{
 		const char* v=argv[1];
@@ -1108,40 +1108,40 @@ int main(int argc,char** argv)
 		}
 	}
 	
-	//If stream exists assign to 'input'
+	// If stream exists assign to 'input'
 	if(std)
 		input=stdin;
 	else
 	{
-		//Read the specified input file
+		// Read the specified input file
 		input=fopen(argv[argc>=3+opts?argc-2:argc-1],"r");
 		if(!input) 
 		{
-			//Print error to screen if file cannot be opened
+			// Print error to screen if file cannot be opened
 			fprintf(stderr,"Can't open input file %s\n",argv[argc>=3+opts?argc-2:argc-1]);
 			return 3;
 		}
 	}
 	
-	//Check if output file has been specified
+	// Check if output file has been specified
 	if(argc>=3+opts)
 	{
-		//Write to output file
+		// Write to output file
 		output=fopen(argv[argc-1],"w+");
 		if(!output) 
 		{
-			//Print error to screen if file cannot be opened
+			// Print error to screen if file cannot be opened
 			fprintf(stderr,"Can't open output file %s\n",argv[argc-1]);
 			return 4;
 		}
 	}
-	//Else print results to output file
+	// Else print results to output file
 	else output=stdout;	
 	
-	//Set some global variables to their default value
+	// Set some global variables to their default value
 	qm=elmar=nono=superclick=superflag=0;
 	
-	//Create an array containing stats we wish to calculate
+	// Create an array containing stats we wish to calculate
 	const char* info[]={"RAW_Time","RAW_3BV","RAW_Solved3BV","RAW_3BV/s","RAW_ZiNi","RAW_ZiNi/s","RAW_HZiNi","RAW_HZiNi/s",
 						"RAW_Clicks","RAW_Clicks/s",
 						"RAW_LeftClicks","RAW_LeftClicks/s","RAW_RightClicks","RAW_RightClicks/s",
@@ -1154,16 +1154,16 @@ int main(int argc,char** argv)
 						"RAW_Flags","RAW_WastedFlags","RAW_Unflags","RAW_Misflags","RAW_Misunflags",
 						"RAW_RilianClicks","RAW_RilianClicks/s"};
 						
-	//Initialise local variables		
-	//The size of char is 4 (32 bit) or 8 (64 bit) on Linux but is 4 in both cases for Windows
-	//Either way this should return the count of items in the info[] array
+	// Initialise local variables		
+	// The size of char is 4 (32 bit) or 8 (64 bit) on Linux but is 4 in both cases for Windows
+	// Either way this should return the count of items in the info[] array
 	const int num_info=sizeof(info)/sizeof(char*);
 	int has_info[num_info];
 	long ptr_info[num_info];
 	int info_i[num_info];
 	double info_d[num_info];
 	
-	//Create array with default values for each stat in the info[] array
+	// Create array with default values for each stat in the info[] array
 	int int_info[]={0,1,1,0,1,0,1,0,
 							1,0,
 							1,0,1,0,
@@ -1176,27 +1176,27 @@ int main(int argc,char** argv)
 							1,1,1,1,1,
 							1,0};
 							
-	//Set some local variables to default values					
+	// Set some local variables to default values					
 	int check_info[num_info];	
 	int ww=8,hh=8,mm=10,m_cl=1,no_mode=1;
 	int square_size=16;
 	int claims_win=0;
 	
-	//Clear some arrays related to info[]
+	// Clear some arrays related to info[]
 	for(i=0;i<num_info;++i) has_info[i]=0;
 	for(i=0;i<num_info;++i) check_info[i]=1&& !no_zini;
 	
-	//Clear some arrays related to board[]
+	// Clear some arrays related to board[]
 	for(i=0;i<MAXOPS;++i) size_ops[i]=0;
 	for(i=0;i<MAXISLS;++i) size_isls[i]=0;
 
-	//Read the input file header and extract existing stats to output file (or screen)
+	// Read the input file header and extract existing stats to output file (or screen)
 	while(1)
 	{
 		int info_str=0;
 		long ptr=ftell(input);
 		
-		//Read a line from input file and store in char event
+		// Read a line from input file and store in char event
 		fgets(event,MAXLEN,input);
 		
 		if(feof(input)) 
@@ -1204,9 +1204,9 @@ int main(int argc,char** argv)
 			error("No board\n");
 		}		
 		
-		//Stop extracting lines once input file header reaches the board layout
+		// Stop extracting lines once input file header reaches the board layout
 		if(opteq(event,"board")) break;
-		//Otherwise extract the game information
+		// Otherwise extract the game information
 		else if(opteq(event,"width")) w=atoi(event+6);
 		else if(opteq(event,"height")) h=atoi(event+7);
 		else if(opteq(event,"mines")) m=atoi(event+6);
@@ -1214,7 +1214,7 @@ int main(int argc,char** argv)
 		else if(opteq(event,"level"))
 		{
 			const char* e=event+6;
-			//Marathon is a Viennasweeper mode used in some tournaments
+			// Marathon is a Viennasweeper mode used in some tournaments
 			if(valeq(e,"Marathon"))
 				error("This program doesn't support marathon RawVF");
 			else if(valeq(e,"Beginner"))
@@ -1236,7 +1236,7 @@ int main(int argc,char** argv)
 			m_cl=valeq(event+5,"Classic");
 		}
 		else
-			//Print any other lines in the input file header
+			// Print any other lines in the input file header
 			for(i=0;i<num_info;++i)
 			{
 				if(opteq(event,info[i]))
@@ -1247,14 +1247,14 @@ int main(int argc,char** argv)
 					break;
 				}
 			}
-		//Write	event to the output file (or screen)
+		// Write	event to the output file (or screen)
 		fputs(event,output);
 	}
 	
-	//Get number of cells in the board
+	// Get number of cells in the board
 	board=(cell*)malloc(sizeof(cell)*(size=w*h));
 
-	//Writes stats and if no value prints blank value
+	// Writes stats and if no value prints blank value
 	for(i=0;i<num_info;++i)
 		if(!has_info[i])
 		{
@@ -1263,33 +1263,33 @@ int main(int argc,char** argv)
 			fputs(":           \n",output);
 		}		
 	
-	//Reset any knowledge of cells
+	// Reset any knowledge of cells
 	clearboard();
 	
-	//Check which cells are mines and note them with the '*' symbol
+	// Check which cells are mines and note them with the '*' symbol
 	for(r=0;r<h;++r)
 	{
 		fgets(event,MAXLEN,input);
 		for(c=0;c<w;++c) board[c*h+r].mine=event[c]=='*';
-		//Write	board with mines to the output file (or screen)
+		// Write	board with mines to the output file (or screen)
 		fputs(event,output);
 	}	
 	
-	//Call function to get number of Openings and Islands
+	// Call function to get number of Openings and Islands
 	init_board();
 	
-	//Call function to calculate 3bv
+	// Call function to calculate 3bv
 	calc_bbbv();
 	
-	//Call function to calculate ZiNi
+	// Call function to calculate ZiNi
 	if(!no_zini) calc_zini();	
 	
-	//Initialise variables with default values
+	// Initialise variables with default values
 	solved_bbbv=distance=l_clicks=r_clicks=d_clicks=wasted_l_clicks=wasted_r_clicks=wasted_d_clicks=
 	clicks_15=wasted_clicks_15=flags=wasted_flags=unflags=misflags=misunflags=rilian_clicks=0;
 	left=right=middle=shift_left=chorded=onedotfive=0;
 	
-	//Write the game events
+	// Write the game events
 	while(1)
 	{
 		int board_event,len;
@@ -1297,56 +1297,56 @@ int main(int argc,char** argv)
 		if(feof(input)) break;
 		
 		len=strlen(event);
-		//Closed, Flag, Questionmark, Pressed & Pressed Questionmark, Nonstandard
+		// Closed, Flag, Questionmark, Pressed & Pressed Questionmark, Nonstandard
 		board_event=len<=2 || event[0]=='c' || event[0]=='f' || event[0]=='q' || event[0]=='p' || event[0]=='n';
 		if(!no_board_events && board_event) continue;
 		
-		//Write	event to output file (or screen)
+		// Write	event to output file (or screen)
 		fputs(event,output);
 		
-		//Ignore certain board events
+		// Ignore certain board events
 		if(board_event) 
 			continue;
-		//Start (implemented in Viennasweeper)
+		// Start (implemented in Viennasweeper)
 		else if(event[0]=='s')
 			continue;
-		//Won (implemented in Viennasweeper)
+		// Won (implemented in Viennasweeper)
 		else if(event[0]=='w')
 			claims_win=1;
-		//Blast (implemented in Viennasweeper)
+		// Blast (implemented in Viennasweeper)
 		else if(event[0]=='b' && event[1]=='l')
 			continue;
-		//Boom (implemented in Freesweeper)
+		// Boom (implemented in Freesweeper)
 		else if(event[0]=='b' && event[1]=='o')
 			continue;			
-		//Nonstandard (proposed in RAW standard)
+		// Nonstandard (proposed in RAW standard)
 		else if(event[0]=='n' && event[1]=='o')
 			continue;
 		
-		//Mouse events and the function to call in each case
+		// Mouse events and the function to call in each case
 		else if(isdigit(event[0]) || event[0]=='-')
 		{
 			int i=(event[0]=='-'?1:0);
 			void (*func)(int,int,int,int)=0;
 			int x,y,neg_x,neg_y;
 			
-			//Get the time of the event
+			// Get the time of the event
 			cur_time=0;
 			while(event[i]!='.' && i<len) cur_time=cur_time*10+event[i++]-'0';
 			
-			//Deal with seconds, tenths and hundredths
+			// Deal with seconds, tenths and hundredths
 			cur_time=cur_time*1000+(event[i+1]-'0')*100+(event[i+2]-'0')*10;
-			//Include thousandths if available
+			// Include thousandths if available
 			if(isdigit(event[i+3])) cur_time+=(event[i+3]-'0');						
 			
 			while(event[++i]!=' ' && i<len);
 			while(event[++i]==' ' && i<len);
 			if(event[0]=='-') cur_time=0;
 			
-			//Get the type of event
+			// Get the type of event
 			if(i+1>=len) continue;
 			
-			//Left button
+			// Left button
 			if(event[i]=='l')
 				if(event[i+1]=='r')
 					func=left_click;
@@ -1355,7 +1355,7 @@ int main(int argc,char** argv)
 				else
 					error("Unknown event");
 				
-			//Right button
+			// Right button
 			else if(event[i]=='r')
 				if(event[i+1]=='r')
 					func=right_click;
@@ -1364,7 +1364,7 @@ int main(int argc,char** argv)
 				else
 					error("Unknown event");
 				
-			//Mouse movement and Middle button
+			// Mouse movement and Middle button
 			else if(event[i]=='m')
 				if(event[i+1]=='v')
 					func=mouse_move;
@@ -1372,34 +1372,34 @@ int main(int argc,char** argv)
 					func=middle_click;
 				else if(event[i+1]=='c')
 					func=middle_press;
-				//Toggle question mark setting (implemented in MinesweeperX)
+				// Toggle question mark setting (implemented in MinesweeperX)
                 else if(event[i+1]=='t')
 					func=toggle_question_mark_setting;
 				else
 					error("Unknown event");
 
-			//Start (implemented in Viennasweeper)
+			// Start (implemented in Viennasweeper)
 			else if(event[i]=='s')
 				if(event[i+1]=='t') 
 					continue;
-				//Scrolling (proposed in RAW standard)
+				// Scrolling (proposed in RAW standard)
 				else if(event[i+1]=='x' || event[i+1]=='y')
 					continue;
-				//Shift chord (implemented in Arbiter & Freesweeper)
+				// Shift chord (implemented in Arbiter & Freesweeper)
 				else if(event[i+1]=='c')
 					func=left_press_with_shift;
 				else
 					error("Unknown event");
-			//Won (implemented in Viennasweeper)
+			// Won (implemented in Viennasweeper)
 			else if(event[i]=='w')
 				claims_win=1;
-			//Blast (implemented in Viennasweeper)
+			// Blast (implemented in Viennasweeper)
 			else if(event[i]=='b' && event[i+1]=='l')
 				continue;
-			//Boom (implemented in Freesweeper)
+			// Boom (implemented in Freesweeper)
 			else if(event[i]=='b' && event[i+1]=='o')
 				continue;				
-			//Nonstandard (proposed in RAW standard)
+			// Nonstandard (proposed in RAW standard)
 			else if(event[i]=='n' && event[i+1]=='o')
 				continue;
 			else
@@ -1421,7 +1421,7 @@ int main(int argc,char** argv)
 		}		
 	}		
 	
-	//Set some local variables	
+	// Set some local variables	
 	if(!end_time) end_time=cur_time;
 	i=0;
 	int clicks=l_clicks+r_clicks+d_clicks;
@@ -1429,7 +1429,7 @@ int main(int argc,char** argv)
 	int e_clicks=clicks-w_clicks;
 	double coeff=(double)solved_bbbv/bbbv;
 	
-	//Calculate all remaining stats	
+	// Calculate all remaining stats	
 	info_d[i++]=end_time/1000.0;	
 	info_i[i++]=bbbv;
 	info_i[i++]=solved_bbbv;
@@ -1473,31 +1473,31 @@ int main(int argc,char** argv)
 	info_i[i++]=rilian_clicks;
 	info_d[i]=info_i[i-1]/info_d[0];++i;
 	
-	//If input file header is read and contains game Status perform the following check
+	// If input file header is read and contains game Status perform the following check
 	if(!no_check_info && claims_win && !won) 
 		fprintf(stderr,"File contains wrong info: it says the game was won while it was not\n");
 
-	//Write generated stats
+	// Write generated stats
 	for(i=0;i<num_info;++i)
-		//Continue until an empty info[i] value is reached
+		// Continue until an empty info[i] value is reached
 		if(!check_info[i]) continue;
-		//If there is no input file header information
+		// If there is no input file header information
 		else if(!has_info[i])
 		{
-			//This reads the output file starting from the first row of generated stats
+			// This reads the output file starting from the first row of generated stats
 			fseek(output,ptr_info[i],SEEK_SET);				
 			
-			//Print key and value pair if integer
+			// Print key and value pair if integer
 			if(int_info[i])
 				{
 				fprintf(output,"%d",info_i[i]);
 				}
-			//Print key and value pair if decimal			
+			// Print key and value pair if decimal			
 			else
 				{
-				//This fixes a rounding error. The 3f rounds to 3 decimal places.
-				//Using 10,000 rounds the 4th decimal place first before 3f is calculated.
-				//This has the desired effect of truncating to 3 decimals instead of rounding.
+				// This fixes a rounding error. The 3f rounds to 3 decimal places.
+				// Using 10,000 rounds the 4th decimal place first before 3f is calculated.
+				// This has the desired effect of truncating to 3 decimals instead of rounding.
 				int fix;
 				float fixfloated;					
 				fix=(int)(info_d[i]*10000);
@@ -1505,7 +1505,7 @@ int main(int argc,char** argv)
 				fprintf(output,"%.3f",fixfloated);		
 				}
 		}
-		//If input file header did not exist or was intentionally not read perform error checks
+		// If input file header did not exist or was intentionally not read perform error checks
 		else if(!no_check_info)
 		{
 			int j;double d,dd;
