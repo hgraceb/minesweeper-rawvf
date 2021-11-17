@@ -3,5 +3,4 @@ project(minesweeper_rawvf C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(minesweeper_rawvf
-        src/parser_raw.c)
+add_executable(minesweeper_rawvf src/parser_mvf.c)
